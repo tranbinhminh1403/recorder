@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Rnd } from "react-rnd";
 import TitleBar from "./titleBar";
 
@@ -8,22 +8,35 @@ interface WindowProps {
   children: React.ReactNode;
   trigger: React.ReactNode;
   title?: string;
+  onOpen?: (element: HTMLElement) => void;
 }
 
-const Window = ({ children, trigger, title = "Window" }: WindowProps) => {
+const Window = ({
+  children,
+  trigger,
+  title = "Window",
+  onOpen,
+}: WindowProps) => {
+  const windowRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClose = () => {
     setIsOpen(false);
   };
 
+  const handleOpen = () => {
+    setIsOpen(true);
+    setTimeout(() => {
+      if (windowRef.current && onOpen) {
+        onOpen(windowRef.current);
+      }
+    }, 0);
+  };
+
   return (
     <>
       {/* Customizable Trigger */}
-      <div
-        onClick={() => setIsOpen(true)}
-        className="cursor-pointer inline-block"
-      >
+      <div onClick={handleOpen} className="cursor-pointer inline-block">
         {trigger}
       </div>
 
@@ -36,13 +49,13 @@ const Window = ({ children, trigger, title = "Window" }: WindowProps) => {
             width: 500,
             height: 300,
           }}
-          minWidth={300}
-          minHeight={200}
+          minWidth={200}
+          minHeight={100}
           dragHandleClassName="handle"
           bounds="window"
           // style={{
           //   zIndex: 1000,
-          //   position: 'fixed
+          //   position: "fixed",
           // }}
           resizeHandleStyles={{
             bottom: { bottom: 0, height: "4px", cursor: "s-resize" },
@@ -79,7 +92,10 @@ const Window = ({ children, trigger, title = "Window" }: WindowProps) => {
             },
           }}
         >
-          <div className="h-full bg-white window-border overflow-hidden">
+          <div
+            ref={windowRef}
+            className="h-full bg-white window-border overflow-hidden"
+          >
             {/* Windows-style title bar */}
             <TitleBar title={title} handleClose={handleClose} />
 

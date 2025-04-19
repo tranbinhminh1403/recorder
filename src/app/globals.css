@@ -125,4 +125,7 @@
   .window-border {
     @apply shadow-[5px_5px_0px_0px_#584578] border border-[#584578];
   }
+  .square {
+    @apply border-2 border-[#584578] h-10 w-10 bg-[#584578];
+  }
 }
